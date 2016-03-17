@@ -2,8 +2,9 @@
 
 function async(generatorsource) {
  return function(...inputs) {
+  let originalthis = this
   return(new Promise(function(resolve, reject) {
-   let generator = generatorsource(...inputs)
+   let generator = generatorsource.apply(originalthis, inputs)
    return((function continuer(type, input) {
     if(type != "next" && type != "throw") {
      input = type
