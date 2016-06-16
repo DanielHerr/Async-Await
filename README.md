@@ -14,4 +14,4 @@ test.then(function(result) {
 })
 ```
 
-<a href="https://danielherr.github.io/Async-Await/test.html">Run Tests</a>
+<a href="https://danielherr.github.io/Async-Await/test.html" target="_blank">Run Tests</a>
