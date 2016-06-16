@@ -13,3 +13,5 @@ test.then(function(result) {
  console.log(result)
 })
 ```
+
+<a href="https://danielherr.github.io/Async-Await/test.html">Run Tests</a>
