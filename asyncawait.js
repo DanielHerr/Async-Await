@@ -1,36 +1,40 @@
 "use strict"
 
 function async(generatorsource) {
- let asyncfunction = function(...inputs) {
-  let originalthis = this
-  return(new Promise(function(resolve, reject) {
-   let generator = generatorsource.apply(originalthis, inputs)
-   function proceed(type = "next" || "throw", input) {
-    let result
-    try {
-     if(type == "throw") {
-      result = generator.throw(input)
+ return(new Proxy(generatorsource, {
+  apply(target, that, inputs) {
+   return(new Promise(function(resolve, reject) {
+    let generator = Reflect.apply(target, that, inputs)
+    function proceed(type = "next" || "throw", input) {
+     try {
+      let result
+      if(type == "throw") {
+       result = generator.throw(input)
+      } else {
+       result = generator.next(input)
+      }
+      if(result.done) {
+       resolve(result.value)
+      } else {
+       Promise.resolve(result.value).then(function(result) {
+        proceed("next", result)
+       }).catch(function(error) {
+        proceed("throw", error)
+      }) }
+     } catch(error) {
+      reject(error)
+    } }
+    proceed("next")
+  })) },
+  get(target, key) {
+   if(key == "toString") {
+    return(function() {
+     let sourcecode = generatorsource.toString()
+     if(sourcecode.startsWith("function* (")) {
+      return(sourcecode.replace("function* (", "async function("))
      } else {
-      result = generator.next(input)
-     }
-    } catch(error) {
-     reject(error)
-    }
-    if(result.done) {
-     resolve(result.value)
-    } else {
-     Promise.resolve(result.value).then(function(result) {
-      proceed("next", result)
-     }).catch(function(error) {
-      proceed("throw", error)
-   }) } }
-   return(proceed("next"))
- })) }
- Object.defineProperties(asyncfunction, {
-  name: {
-   value: generatorsource.name, configurable: true
-  }, length: {
-   value: generatorsource.length, configurable: true
- } })
- return(asyncfunction)
-}
+      return(sourcecode.replace("function*", "async function"))
+    } })
+   } else {
+    return(Reflect.get(target, key))
+} } })) }
