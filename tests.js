@@ -15,8 +15,8 @@ test("length property", function() {
 test("toString method", function() {
  let result1 = async(function*() { })
  let result2 = result1.toString()
- if(result2 != "async function() { }") {
-  throw('should return "async function() { }" but returns ' + result2)
+ if(result2 != "async function () { }") {
+  throw('should return "async function () { }" but returns ' + result2)
 } })
 
 test("returns promise", function() {

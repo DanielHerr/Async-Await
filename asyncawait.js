@@ -29,12 +29,8 @@ function async(generatorsource) {
   get(target, key) {
    if(key == "toString") {
     return(function() {
-     let sourcecode = generatorsource.toString()
-     if(sourcecode.startsWith("function* (")) {
-      return(sourcecode.replace("function* (", "async function("))
-     } else {
-      return(sourcecode.replace("function*", "async function"))
-    } })
+     return(generatorsource.toString().replace("function*", "async function"))
+    })
    } else {
     return(Reflect.get(target, key))
 } } })) }
